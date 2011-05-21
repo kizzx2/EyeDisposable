@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using System.IO;
 using System.Diagnostics;
-using IDisposerCore;
+using IDisposer.Core;
 using System.Reflection;
 
 namespace IDisposer

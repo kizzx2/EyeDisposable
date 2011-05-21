@@ -43,9 +43,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\IDisposerCore\IDisposerCore.csproj">
+    <ProjectReference Include="..\IDisposer.Core\IDisposer.Core.csproj">
       <Project>{A566F37E-6B73-45D5-9BCA-E7A4F664A269}</Project>
-      <Name>IDisposerCore</Name>
+      <Name>IDisposer.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
