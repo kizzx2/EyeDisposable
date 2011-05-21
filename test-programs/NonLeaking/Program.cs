@@ -26,19 +26,25 @@ namespace NonLeaking
         }
     }
 
+    class Bar
+    {
+        public void Dispose()
+        {
+        }
+    }
 
-    /// <summary>
-    /// This program should not be detected as leaking.
-    /// </summary>
-    class Program
+    static class TestCases
     {
         // Use this in if() statements to false a branch in generated IL
         static bool sTrue = new object() != null;
 
-        static void Main(string[] args)
+        public static void CreateAnObject()
         {
             new object();
+        }
 
+        public static void SomeBasicScenarios()
+        {
             try
             {
                 using (new MemoryStream())
@@ -56,8 +62,34 @@ namespace NonLeaking
                 s2.Dispose();
 
             Disposer.Dispose(new MemoryStream());
-
             new Foo().DisposeIndirectly();
+        }
+
+        public static void DisposeTwice()
+        {
+            var f = new Foo();
+            f.Dispose();
+            f.Dispose();
+        }
+
+        public static void NonDisposableItemWithAMethodCalledDispose()
+        {
+            new Bar();
+        }
+    }
+
+    /// <summary>
+    /// This program should not be detected as leaking.
+    /// </summary>
+    class Program
+    {
+
+        static void Main(string[] args)
+        {
+            TestCases.CreateAnObject();
+            TestCases.SomeBasicScenarios();
+            TestCases.DisposeTwice();
+            TestCases.NonDisposableItemWithAMethodCalledDispose();
         }
     }
 }

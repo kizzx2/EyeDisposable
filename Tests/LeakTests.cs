@@ -14,7 +14,8 @@ namespace Tests
         [TestCase("NonLeaking.exe", 0)]
         [TestCase("Leaker1.exe", 1)]
         [TestCase("Leaker2.exe", 2)]
-        //[TestCase("StrongNamedLeaker.exe", 1)]
+        [TestCase("StrongNamedLeaker.exe", 1)]
+        [TestCase("DotNet2Leaker.exe", 3)]
         public void LeakTest(string filename, int expectedLeaks)
         {
             DisposerRegistry.Clear();
@@ -23,12 +24,6 @@ namespace Tests
                 AppDomain.CurrentDomain.ExecuteAssembly(copy.FileName);
             }
             Assert.AreEqual(expectedLeaks, DisposerRegistry.LeakedObjects.Count);
-        }
-
-        [Test]
-        public void StrongNamedLeakTest()
-        {
-            Assert.Ignore("Strong-named assemblies not supported yet.");
         }
     }
 }

@@ -56,7 +56,8 @@ namespace IDisposerCore
                             continue;
 
                         if (i.OpCode == OpCodes.Newobj &&
-                            method.DeclaringType.HasInterface(idisposable))
+                            method.DeclaringType.HasInterface(
+                            idisposable.FullName))
                         {
                             newobjs.Add(i);
                         }
@@ -64,13 +65,14 @@ namespace IDisposerCore
                         else if (i.OpCode == OpCodes.Callvirt ||
                             i.OpCode == OpCodes.Call)
                         {
-                            if(method.FullName == drAdd.FullName)
+                            if (method.FullName == drAdd.FullName)
                                 throw new InvalidOperationException(
                                     "Assembly seems already instrumented.");
 
                             else if (method.Name == "Dispose" &&
                                 method.Parameters.Count == 0 &&
-                                method.ReturnType.Resolve().Equals(typeVoid))
+                                method.ReturnType.Resolve().FullName ==
+                                typeVoid.FullName)
                                 disposes.Add(i);
                         }
                     }
@@ -101,7 +103,20 @@ namespace IDisposerCore
                 }
             }
 
+            RemoveStrongName(asm);
+
             asm.Write(output, new WriterParameters { WriteSymbols = hasSymbol });
+        }
+
+        static void RemoveStrongName(AssemblyDefinition asm)
+        {
+            if (!asm.Name.HasPublicKey)
+                return;
+
+            asm.Name.Attributes &= AssemblyAttributes.PublicKey;
+            asm.Name.HashAlgorithm = AssemblyHashAlgorithm.None;
+            asm.Name.PublicKeyToken = null;
+            asm.Name.PublicKey = null;
         }
 
         static bool PdbExistsForFile(string filename)
