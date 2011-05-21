@@ -5,6 +5,7 @@ using System.Text;
 using NUnit.Framework;
 using System.Reflection;
 using IDisposerCore;
+using IDisposer.Logger;
 
 namespace Tests
 {
@@ -16,6 +17,7 @@ namespace Tests
         [TestCase("Leaker2.exe", 2)]
         [TestCase("StrongNamedLeaker.exe", 1)]
         [TestCase("DotNet2Leaker.exe", 3)]
+        [TestCase("DotNet4Leaker.exe", 2)]
         public void LeakTest(string filename, int expectedLeaks)
         {
             DisposerRegistry.Clear();

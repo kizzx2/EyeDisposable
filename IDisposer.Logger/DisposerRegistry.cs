@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Globalization;
 
-namespace IDisposerCore
+namespace IDisposer.Logger
 {
     public static class DisposerRegistry
     {
@@ -23,11 +23,17 @@ namespace IDisposerCore
 
         public static void Add(IDisposable obj)
         {
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
 
             // Shove the first frame and build a stack trace
-            foreach (var frame in new StackTrace(true).GetFrames().Skip(1))
+            bool first = true;
+            foreach (StackFrame frame in new StackTrace(true).GetFrames())
+            {
+                if (first) continue;
+                first = false;
+
                 sb.AppendLine(frame.ToString());
+            }
 
             _dict.Add(obj, sb.ToString());
         }
@@ -39,19 +45,21 @@ namespace IDisposerCore
 
         public static void Check()
         {
-            Logger.Log("====");
-            Logger.Log("Disposer check");
+            Trace.WriteLine("====");
+            Trace.WriteLine("Disposer check");
 
             if (_dict.Count > 0)
-                Logger.Log("{0} leaks detected!", _dict.Count);
-            Logger.Log("====");
+                Trace.WriteLine(string.Format(
+                    CultureInfo.InvariantCulture,
+                    "{0} leaks detected!", _dict.Count));
+            Trace.WriteLine("====");
 
-            foreach (var obj in _dict)
+            foreach (KeyValuePair<IDisposable, string> obj in _dict)
             {
-                Logger.Log("Disposable object leaked!");
-                Logger.Log("Type: " + obj.Key.GetType().Name);
-                Logger.Log("Created at: " + obj.Value);
-                Logger.Log("");
+                Trace.WriteLine("Disposable object leaked!");
+                Trace.WriteLine("Type: " + obj.Key.GetType().Name);
+                Trace.WriteLine("Created at: " + obj.Value);
+                Trace.WriteLine("");
             }
 
             if (_dict.Count > 0 && Debugger.IsAttached)

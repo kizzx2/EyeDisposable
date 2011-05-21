@@ -5,6 +5,7 @@ using System.Text;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using System.IO;
+using IDisposer.Logger;
 
 namespace IDisposerCore
 {

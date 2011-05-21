@@ -5,12 +5,12 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{A566F37E-6B73-45D5-9BCA-E7A4F664A269}</ProjectGuid>
+    <ProjectGuid>{9DDF01F5-D745-42F0-ACFD-F15CDE5F7F90}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>IDisposerCore</RootNamespace>
-    <AssemblyName>IDisposerCore</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <RootNamespace>IDisposer.Logger</RootNamespace>
+    <AssemblyName>IDisposer.Logger</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -39,30 +39,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ILInserter.cs" />
-    <Compile Include="Instrumenter.cs" />
+    <Compile Include="DisposerRegistry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TypeReferenceExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="IDisposer.snk" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\IDisposer.Logger\IDisposer.Logger.csproj">
-      <Project>{9DDF01F5-D745-42F0-ACFD-F15CDE5F7F90}</Project>
-      <Name>IDisposer.Logger</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\lib\mono\cecil\Mono.Cecil.csproj">
-      <Project>{D68133BD-1E63-496E-9EDE-4FBDBF77B486}</Project>
-      <Name>Mono.Cecil</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\lib\mono\cecil\symbols\pdb\Mono.Cecil.Pdb.csproj">
-      <Project>{63E6915C-7EA4-4D76-AB28-0D7191EEA626}</Project>
-      <Name>Mono.Cecil.Pdb</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

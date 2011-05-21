@@ -45,6 +45,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\IDisposer.Logger\IDisposer.Logger.csproj">
+      <Project>{9DDF01F5-D745-42F0-ACFD-F15CDE5F7F90}</Project>
+      <Name>IDisposer.Logger</Name>
+    </ProjectReference>
     <ProjectReference Include="..\IDisposerCore\IDisposerCore.csproj">
       <Project>{A566F37E-6B73-45D5-9BCA-E7A4F664A269}</Project>
       <Name>IDisposerCore</Name>
@@ -73,6 +77,10 @@
     </Content>
     <Content Include="..\test-programs\DotNet2Leaker\$(OutputPath)\DotNet2Leaker.exe">
       <Link>DotNet2Leaker.exe</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\test-programs\DotNet4Leaker\$(OutputPath)\DotNet4Leaker.exe">
+      <Link>DotNet4Leaker.exe</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
