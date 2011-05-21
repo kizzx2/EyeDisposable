@@ -8,33 +8,25 @@ using System.IO;
 
 namespace IDisposerCore
 {
-    public static class Instrumenter
+    public class Instrumenter
     {
-        public static void Instrument(string inputFile, string outputFile)
-        {
-            using (var output = new MemoryStream())
-            {
-                using (var input = new FileStream(inputFile, FileMode.Open))
-                {
-                    Instrument(input, output);
-                }
+        BaseAssemblyResolver _resolver = new DefaultAssemblyResolver();
 
-                using(var outFileStream = new FileStream(outputFile, FileMode.OpenOrCreate))
-                {
-                    output.WriteTo(outFileStream);
-                }
-            }
+        public Instrumenter(params string[] searchDirectories)
+        {
+            foreach(string dir in searchDirectories)
+                _resolver.AddSearchDirectory(dir);
         }
 
-        public static void Instrument(Stream input, Stream output)
+        public void Instrument(string input, string output)
         {
-            bool hasSymbol = false;
-            var inputFileStream = input as FileStream;
-            if (inputFileStream != null)
-                hasSymbol = PdbExistsForFile(inputFileStream.Name);
+            bool hasSymbol = File.Exists(Path.ChangeExtension(input, ".pdb"));
 
             var asm = AssemblyDefinition.ReadAssembly(input,
-                new ReaderParameters { ReadSymbols = hasSymbol } );
+                new ReaderParameters {
+                    ReadSymbols = hasSymbol,
+                    AssemblyResolver = _resolver
+                } );
             var mod = asm.MainModule;
 
             var drAddRef = mod.Import(typeof(DisposerRegistry).GetMethod("Add"));
@@ -51,6 +43,9 @@ namespace IDisposerCore
                 Console.WriteLine("Instrumenting type `{0}`...", t.Name);
                 foreach (var m in t.Methods)
                 {
+                    if(m.Body == null)
+                        continue;
+
                     var newobjs = new List<Instruction>();
                     var disposes = new List<Instruction>();
 
@@ -69,7 +64,7 @@ namespace IDisposerCore
                         else if (i.OpCode == OpCodes.Callvirt ||
                             i.OpCode == OpCodes.Call)
                         {
-                            if (method.Resolve().Equals(drAdd))
+                            if(method.FullName == drAdd.FullName)
                                 throw new InvalidOperationException(
                                     "Assembly seems already instrumented.");
 
@@ -100,8 +95,9 @@ namespace IDisposerCore
                         il.Replace(i, il.Create(OpCodes.Nop));
                     }
 
-                    Console.WriteLine("- {0}: {1} news; {2} disposes",
-                        m.FullName, newobjs.Count, disposes.Count);
+                    if(newobjs.Count > 0 || disposes.Count > 0)
+                        Console.WriteLine("- {0}: {1} news; {2} disposes",
+                            m.FullName, newobjs.Count, disposes.Count);
                 }
             }
 

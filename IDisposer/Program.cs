@@ -6,6 +6,7 @@ using System.Threading;
 using System.IO;
 using System.Diagnostics;
 using IDisposerCore;
+using System.Reflection;
 
 namespace IDisposer
 {
@@ -29,7 +30,8 @@ namespace IDisposer
                 return;
             }
 
-            Instrumenter.Instrument(args[0], args[0]);
+            new Instrumenter(Path.GetDirectoryName(args[0]))
+                .Instrument(args[0], args[0]);
         }
     }
 }

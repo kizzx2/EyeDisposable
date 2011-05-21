@@ -17,7 +17,7 @@ namespace Tests
             string outFilename = Path.Combine(dir, 
                 Path.ChangeExtension(Path.GetRandomFileName(),
                 Path.GetExtension(filename)));
-            Instrumenter.Instrument(filename, outFilename);
+            new Instrumenter().Instrument(filename, outFilename);
 
             FileName = outFilename;
         }
