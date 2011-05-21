@@ -21,7 +21,8 @@ namespace Tests
             {
                 DisposerRegistry.Add(f);
                 Assert.AreEqual(1, DisposerRegistry.LeakedObjects.Count);
-                Assert.IsTrue(DisposerRegistry.LeakedObjects.Keys.Contains(f));
+                Assert.IsTrue(DisposerRegistry.LeakedObjects.Values.Any(
+                    o => o.Target == f));
 
                 DisposerRegistry.Remove(f);
                 Assert.AreEqual(0, DisposerRegistry.LeakedObjects.Count);

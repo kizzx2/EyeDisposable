@@ -104,6 +104,30 @@ namespace IDisposer.Core
                 }
             }
 
+            if (asm.MainModule.EntryPoint != null)
+            {
+                Console.WriteLine("Instrumenting entry point...");
+
+                var oldMain = mod.EntryPoint;
+
+                var newMain = new MethodDefinition("IDisposer_NewMain",
+                    oldMain.Attributes,
+                    mod.Import(typeof(void)));
+                newMain.Parameters.Add(new ParameterDefinition(
+                    mod.Import(typeof(string[]))));
+                foreach (var attr in oldMain.CustomAttributes)
+                    newMain.CustomAttributes.Add(attr);
+
+                var il = newMain.Body.GetILProcessor();
+                il.Emit(OpCodes.Ldarg_0);
+                il.Emit(OpCodes.Call, oldMain);
+                il.Emit(OpCodes.Call, drCheckRef);
+                il.Emit(OpCodes.Ret);
+
+                mod.EntryPoint.DeclaringType.Methods.Add(newMain);
+                mod.EntryPoint = newMain;
+            }
+
             RemoveStrongName(asm);
 
             asm.Write(output, new WriterParameters { WriteSymbols = hasSymbol });

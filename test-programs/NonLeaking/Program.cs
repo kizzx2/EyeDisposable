@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Drawing;
 
 namespace NonLeaking
 {
@@ -16,8 +17,20 @@ namespace NonLeaking
 
     class Foo : IDisposable
     {
+        int _n;
+
+        public Foo(int n)
+        {
+            _n = n;
+        }
+
         public void Dispose()
         {
+        }
+
+        public override int GetHashCode()
+        {
+            return _n;
         }
 
         public void DisposeIndirectly()
@@ -62,12 +75,12 @@ namespace NonLeaking
                 s2.Dispose();
 
             Disposer.Dispose(new MemoryStream());
-            new Foo().DisposeIndirectly();
+            new Foo(0).DisposeIndirectly();
         }
 
         public static void DisposeTwice()
         {
-            var f = new Foo();
+            var f = new Foo(0);
             f.Dispose();
             f.Dispose();
         }
@@ -75,6 +88,16 @@ namespace NonLeaking
         public static void NonDisposableItemWithAMethodCalledDispose()
         {
             new Bar();
+        }
+
+        public static void SameHashCode()
+        {
+            // Font overrides GetHashCode() and Equals()
+            var f1 = new Font("Arial", 10, FontStyle.Regular);
+            var f2 = new Font("Arial", 10, FontStyle.Regular);
+
+            f1.Dispose();
+            f2.Dispose();
         }
     }
 
@@ -90,6 +113,7 @@ namespace NonLeaking
             TestCases.SomeBasicScenarios();
             TestCases.DisposeTwice();
             TestCases.NonDisposableItemWithAMethodCalledDispose();
+            TestCases.SameHashCode();
         }
     }
 }
