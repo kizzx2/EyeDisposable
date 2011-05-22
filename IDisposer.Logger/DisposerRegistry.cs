@@ -5,6 +5,8 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using System.IO;
+using System.Reflection;
 
 namespace IDisposer.Logger
 {
@@ -42,7 +44,12 @@ namespace IDisposer.Logger
                     continue;
                 }
 
-                sb.Append(frame.ToString());
+                sb.Append(string.Format("> [{0}] {1} {2}",
+                    frame.GetMethod().DeclaringType.FullName,
+                    frame.GetMethod().ToString(),
+                    frame.GetFileName() == null ?
+                        Environment.NewLine :
+                        frame.ToString()));
             }
 
             _dict.Add(RuntimeHelpers.GetHashCode(obj),
@@ -58,23 +65,29 @@ namespace IDisposer.Logger
 
         public static void Check()
         {
-            Trace.WriteLine("====");
-            Trace.WriteLine("Disposer check");
-
-            if (_dict.Count > 0)
-                Trace.WriteLine(string.Format(
-                    CultureInfo.InvariantCulture,
-                    "{0} leaks detected!", _dict.Count));
-            Trace.WriteLine("====");
-
-            foreach (var obj in _dict)
+            using(var stream = new FileStream(Assembly.GetEntryAssembly().Location +
+                 ".DisposeLeaks.log", FileMode.Create))
+            using(var writer =new TraceAndStreamWriter(stream))
             {
-                Trace.WriteLine("Disposable object leaked!");
-                Trace.WriteLine("Hash code: " +
-                    obj.Key.ToString(CultureInfo.InvariantCulture));
-                Trace.WriteLine("Type: " + obj.Value.Target.GetType().FullName);
-                Trace.WriteLine("Created at: " + obj.Value.StackTrace);
-                Trace.WriteLine("");
+                writer.WriteLine("====");
+                writer.WriteLine("Disposer check");
+
+                if (_dict.Count > 0)
+                    writer.WriteLine(string.Format(
+                        CultureInfo.InvariantCulture,
+                        "{0} leaks detected!", _dict.Count));
+                writer.WriteLine("====");
+
+                foreach (var obj in _dict)
+                {
+                    writer.WriteLine("Disposable object leaked!");
+                    writer.WriteLine("Hash code: " +
+                        obj.Key.ToString(CultureInfo.InvariantCulture));
+                    writer.WriteLine("Type: " + obj.Value.Target.GetType().FullName);
+                    writer.WriteLine("Created at: " + Environment.NewLine
+                        + obj.Value.StackTrace);
+                    writer.WriteLine("");
+                }
             }
 
             if (_dict.Count > 0 && Debugger.IsAttached)

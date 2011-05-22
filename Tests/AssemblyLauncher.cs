@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Mono.Cecil;
 using System.Threading;
+using System.Diagnostics;
 
 namespace Tests
 {
@@ -11,9 +12,24 @@ namespace Tests
     {
         public static void Launch(string filename)
         {
+            Exception exc = null;
+
             var t = new Thread(() =>
             {
-                AppDomain.CurrentDomain.ExecuteAssembly(filename);
+                var domain = AppDomain.CurrentDomain;
+
+                try
+                {
+                    domain.ExecuteAssembly(filename);
+                }
+                catch(Exception e)
+                {
+                    exc = e;
+                }
+                finally
+                {
+                    //AppDomain.Unload(domain);
+                }
             });
 
             foreach (var a in AssemblyDefinition.ReadAssembly(filename)
@@ -28,6 +44,12 @@ namespace Tests
 
             t.Start();
             t.Join();
+
+            if(exc != null)
+            {
+                throw new Exception("Exception thrown via executing assembly",
+                    exc);
+            }
         }
     }
 }

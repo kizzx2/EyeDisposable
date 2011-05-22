@@ -30,8 +30,17 @@ namespace IDisposer
                 return;
             }
 
-            new Instrumenter(Path.GetDirectoryName(args[0]))
-                .Instrument(args[0], args[0]);
+            var targetDir = Path.GetDirectoryName(args[0]);
+
+            new Instrumenter(targetDir).Instrument(args[0], args[0]);
+
+            // Put IDisposer.Logger.dll next to my target
+            File.Copy("IDisposer.Logger.dll", Path.Combine(
+                targetDir, "IDisposer.Logger.dll"), true);
+
+            if (File.Exists("IDisposer.Logger.pdb"))
+                File.Copy("IDisposer.Logger.pdb", Path.Combine(targetDir,
+                    "IDisposer.Logger.pdb"), true);
         }
     }
 }
