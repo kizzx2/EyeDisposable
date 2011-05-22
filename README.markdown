@@ -43,3 +43,7 @@ Created at:
 &gt; [Foo.Program] Void Main(System.String[])
 &gt; [Foo.Program] Void EyeDisposable_NewMain(System.String[])
 </pre>
+
+## How does it work?
+
+EyeDisposable uses [Mono.Cecil](http://www.mono-project.com/Cecil) to instrument assemblies. `newobj` and `Dispose()` calls are tallied and checked at the end of the program.
