@@ -14,12 +14,14 @@ namespace EyeDisposable
     {
         static void Usage()
         {
+            var selfName = Path.GetFileName(Assembly.GetEntryAssembly().Location);
+
             Console.WriteLine("EyeDisposable by Chris Yuen <chris@kizzx2.com> 2011");
             Console.WriteLine();
             Console.WriteLine("Instrument assembly to catch IDispose leaks.");
             Console.WriteLine();
-            Console.WriteLine("Example: {0} foo.exe");
-            Console.WriteLine("Example: {0} foo.dll");
+            Console.WriteLine("Example: {0} foo.exe", selfName);
+            Console.WriteLine("Example: {0} foo.dll", selfName);
         }
 
         static void Main(string[] args)
