@@ -93,6 +93,14 @@
       <Link>StaThreadLeaker.exe</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="..\test-programs\LeakerLib\$(OutputPath)\LeakerLib.dll">
+      <Link>LeakerLib.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\test-programs\CrossBoundaryLeaker\$(OutputPath)\CrossBoundaryLeaker.exe">
+      <Link>CrossBoundaryLeaker.exe</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

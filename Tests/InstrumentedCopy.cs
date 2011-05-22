@@ -10,13 +10,23 @@ namespace Tests
     sealed class InstrumentedCopy : IDisposable
     {
         public string FileName { get; private set; }
+        public string DirectoryName { get; private set; }
 
-        public InstrumentedCopy(string filename)
+        public InstrumentedCopy(string filename) : this(filename,
+            Path.Combine(Path.GetDirectoryName(filename),
+            Path.GetRandomFileName()))
         {
-            var dir = Path.GetDirectoryName(filename);
-            string outFilename = Path.Combine(dir, 
-                Path.ChangeExtension(Path.GetRandomFileName(),
-                Path.GetExtension(filename)));
+        }
+
+        public InstrumentedCopy(string filename, string dir)
+        {
+            DirectoryName = dir;
+
+            if(!Directory.Exists(DirectoryName))
+                Directory.CreateDirectory(DirectoryName);
+
+            string outFilename = Path.Combine(DirectoryName, 
+                Path.GetFileName(filename));
             new Instrumenter().Instrument(filename, outFilename);
 
             FileName = outFilename;
@@ -24,8 +34,8 @@ namespace Tests
 
         public void Dispose()
         {
-            if (File.Exists(FileName))
-                File.Delete(FileName);
+            if (DirectoryName != null && Directory.Exists(DirectoryName))
+                Directory.Delete(DirectoryName, true);
         }
     }
 }
