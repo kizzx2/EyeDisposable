@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="ILInserter.cs" />
     <Compile Include="Instrumenter.cs" />
+    <Compile Include="ILExtractor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TypeReferenceExtensions.cs" />
   </ItemGroup>
@@ -58,6 +59,10 @@
     <ProjectReference Include="..\lib\mono\cecil\Mono.Cecil.csproj">
       <Project>{D68133BD-1E63-496E-9EDE-4FBDBF77B486}</Project>
       <Name>Mono.Cecil</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\lib\mono\cecil\rocks\Mono.Cecil.Rocks.csproj">
+      <Project>{FBC6DD59-D09D-499C-B03C-99C1C78FF2AC}</Project>
+      <Name>Mono.Cecil.Rocks</Name>
     </ProjectReference>
     <ProjectReference Include="..\lib\mono\cecil\symbols\pdb\Mono.Cecil.Pdb.csproj">
       <Project>{63E6915C-7EA4-4D76-AB28-0D7191EEA626}</Project>

@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Mono.Cecil;
-using Mono.Cecil.Cil;
 using System.IO;
 using IDisposer.Logger;
+
+using Mono.Cecil;
+using Mono.Cecil.Cil;
+using Mono.Cecil.Rocks;
 
 namespace IDisposer.Core
 {
@@ -36,90 +38,59 @@ namespace IDisposer.Core
 
             var drAdd = drAddRef.Resolve();
 
-            var idisposable = mod.Import(typeof(IDisposable)).Resolve();
-            var typeVoid = mod.Import(typeof(void)).Resolve();
-
             foreach (var t in asm.MainModule.Types)
             {
                 Console.WriteLine("Instrumenting type `{0}`...", t.Name);
                 foreach (var m in t.Methods)
                 {
-                    if(m.Body == null)
+                    if (m.Body == null)
                         continue;
 
-                    var newobjs = new List<Instruction>();
-                    var disposes = new List<Instruction>();
+                    // If the method does not contain any instrument-able 
+                    // targets, avoid touching it at all
+                    if(ILExtractor.FindNewObjsAndDisposes(m.Body).IsEmpty)
+                        continue;
 
-                    foreach (var i in m.Body.Instructions)
-                    {
-                        var method = i.Operand as MethodReference;
-                        if (method == null)
-                            continue;
+                    if (ILExtractor.ContainsCallTo(m.Body, drAdd.FullName))
+                        throw new InvalidOperationException(
+                            "Assembly appears to be already instrumented.");
 
-                        if (i.OpCode == OpCodes.Newobj &&
-                            method.DeclaringType.HasInterface(
-                            idisposable.FullName))
-                        {
-                            newobjs.Add(i);
-                        }
-
-                        else if (i.OpCode == OpCodes.Callvirt ||
-                            i.OpCode == OpCodes.Call)
-                        {
-                            if (method.FullName == drAdd.FullName)
-                                throw new InvalidOperationException(
-                                    "Assembly seems already instrumented.");
-
-                            else if (
-                                method.Name == "Dispose" &&
-                                method.Parameters.Count == 0 &&
-                                method.ReturnType.Resolve().FullName ==
-                                    typeVoid.FullName)
-                            {
-                                // We don't do value types yet
-                                if(method.DeclaringType.IsValueType)
-                                    continue;
-
-                                // This may happen if the user code contains 
-                                // a `using` block with a value type 
-                                // implementing IDisposable
-                                else if (i.Previous.OpCode == OpCodes.Constrained)
-                                {
-                                    var constrainedType =
-                                        i.Previous.Operand as TypeDefinition;
-
-                                    if(constrainedType != null &&
-                                        constrainedType.IsValueType)
-                                        continue;
-                                }
-
-                                disposes.Add(i);
-                            }
-                        }
-                    }
+                    // This is necessary to make Cecil output proper codes 
+                    // in more complicated cases
+                    m.Body.SimplifyMacros();
+                    var targets = ILExtractor.FindNewObjsAndDisposes(m.Body);
 
                     var il = m.Body.GetILProcessor();
 
-                    foreach (var i in newobjs)
+                    foreach (var i in targets.NewObjs)
                     {
-                            new ILInserter(il, i)
-                                .Append(il.Create(OpCodes.Call, drAddRef));
+                        new ILInserter(il, i)
+                            .Append(il.Create(OpCodes.Dup))
+                            .Append(il.Create(OpCodes.Call, drAddRef));
                     }
 
-                    foreach (var i in disposes)
+                    foreach (var i in targets.Disposes)
                     {
+                        var instrumentTarget = i;
+
+                        // Constrained-Callvirt pair must be moved
+                        // atomically
+                        if (i.Previous.OpCode == OpCodes.Constrained)
+                            instrumentTarget = i.Previous;
+                        
                         // Put instrumenting opcodes _after_ 
                         // the instruction, and then replace with Nop.
                         // This way we don't have to deal with branches. 
-                        new ILInserter(il, i)
+                        new ILInserter(il, instrumentTarget)
+                            .Append(il.Create(OpCodes.Dup))
                             .Append(il.Create(OpCodes.Call, drRemoveRef))
-                            .Append(i);
-                        il.Replace(i, il.Create(OpCodes.Nop));
+                            .Append(instrumentTarget);
+                        il.Replace(instrumentTarget, il.Create(OpCodes.Nop));
                     }
 
-                    if(newobjs.Count > 0 || disposes.Count > 0)
-                        Console.WriteLine("- {0}: {1} newobjs; {2} disposes",
-                            m.FullName, newobjs.Count, disposes.Count);
+                    Console.WriteLine("- {0}: {1} newobjs; {2} disposes",
+                        m.FullName, targets.NewObjs.Count,
+                        targets.Disposes.Count);
                 }
             }
 

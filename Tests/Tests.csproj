@@ -41,6 +41,7 @@
     <Compile Include="AssemblyLauncher.cs" />
     <Compile Include="BasicTests.cs" />
     <Compile Include="InstrumentedCopy.cs" />
+    <Compile Include="InstrumenterTests.cs" />
     <Compile Include="LeakTests.cs" />
     <Compile Include="SampleDisposable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
