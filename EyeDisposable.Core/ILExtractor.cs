@@ -55,6 +55,9 @@ namespace EyeDisposable.Core
                     operandMethod.DeclaringType.HasInterface(
                     kIDisposableFullName))
                 {
+                    if(operandMethod.DeclaringType.IsValueType)
+                        continue;
+
                     newobjs.Add(i);
                 }
 
