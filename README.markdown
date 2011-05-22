@@ -47,3 +47,13 @@ Created at:
 ## How does it work?
 
 EyeDisposable uses [Mono.Cecil](http://www.mono-project.com/Cecil) to instrument assemblies. `newobj` and `Dispose()` calls are tallied and checked at the end of the program.
+
+## Cloning
+
+You need to update the Cecil submodule after cloning:
+
+<pre>
+> git clone git://github.com/kizzx2/EyeDisposable.git
+> cd EyeDisposable
+> git submodule update
+</pre>
