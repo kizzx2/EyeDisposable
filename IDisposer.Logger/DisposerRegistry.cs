@@ -25,7 +25,10 @@ namespace IDisposer.Logger
         static Dictionary<int, DisposableObject> _dict =
             new Dictionary<int, DisposableObject>();
 
-        public static void Add(IDisposable obj)
+        /// <summary>
+        /// Returns the given object to reduce instrumenting ILs
+        /// </summary>
+        public static object Add(IDisposable obj)
         {
             Debug.WriteLine(string.Format("Adding object `{0}`",
                 obj.GetType().Name));
@@ -47,13 +50,17 @@ namespace IDisposer.Logger
 
             _dict.Add(RuntimeHelpers.GetHashCode(obj),
                 new DisposableObject(obj, sb.ToString()));
+
+            return obj;
         }
 
-        public static void Remove(IDisposable obj)
+        public static object Remove(IDisposable obj)
         {
             Debug.WriteLine(string.Format("Removing object `{0}`",
                 obj.GetType().Name));
             _dict.Remove(RuntimeHelpers.GetHashCode(obj));
+
+            return obj;
         }
 
         public static void Check()

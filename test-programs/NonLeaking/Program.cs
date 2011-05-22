@@ -46,6 +46,14 @@ namespace NonLeaking
         }
     }
 
+    struct Baz : IDisposable
+    {
+        public void Dispose()
+        {
+        }
+    }
+
+
     static class TestCases
     {
         // Use this in if() statements to false a branch in generated IL
@@ -98,6 +106,20 @@ namespace NonLeaking
 
             f1.Dispose();
             f2.Dispose();
+
+            var b = new SolidBrush(Color.Black);
+            b.Dispose();
+        }
+
+        public static void ValueTypeDisposable()
+        {
+            using (new Baz())
+            {
+            }
+
+            var b = new Baz();
+            if(sTrue)
+                b.Dispose();
         }
     }
 
@@ -106,7 +128,6 @@ namespace NonLeaking
     /// </summary>
     class Program
     {
-
         static void Main(string[] args)
         {
             TestCases.CreateAnObject();
@@ -114,6 +135,7 @@ namespace NonLeaking
             TestCases.DisposeTwice();
             TestCases.NonDisposableItemWithAMethodCalledDispose();
             TestCases.SameHashCode();
+            TestCases.ValueTypeDisposable();
         }
     }
 }

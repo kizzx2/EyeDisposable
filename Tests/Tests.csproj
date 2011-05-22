@@ -38,6 +38,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssemblyLauncher.cs" />
     <Compile Include="BasicTests.cs" />
     <Compile Include="InstrumentedCopy.cs" />
     <Compile Include="LeakTests.cs" />
@@ -52,6 +53,10 @@
     <ProjectReference Include="..\IDisposer.Core\IDisposer.Core.csproj">
       <Project>{A566F37E-6B73-45D5-9BCA-E7A4F664A269}</Project>
       <Name>IDisposer.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\lib\mono\cecil\Mono.Cecil.csproj">
+      <Project>{D68133BD-1E63-496E-9EDE-4FBDBF77B486}</Project>
+      <Name>Mono.Cecil</Name>
     </ProjectReference>
     <ProjectReference Include="..\lib\mono\cecil\symbols\pdb\Mono.Cecil.Pdb.csproj">
       <Project>{63E6915C-7EA4-4D76-AB28-0D7191EEA626}</Project>
@@ -81,6 +86,10 @@
     </Content>
     <Content Include="..\test-programs\DotNet4Leaker\$(OutputPath)\DotNet4Leaker.exe">
       <Link>DotNet4Leaker.exe</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\test-programs\StaThreadLeaker\$(OutputPath)\StaThreadLeaker.exe">
+      <Link>StaThreadLeaker.exe</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

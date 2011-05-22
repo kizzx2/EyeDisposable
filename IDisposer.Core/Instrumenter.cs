@@ -70,11 +70,31 @@ namespace IDisposer.Core
                                 throw new InvalidOperationException(
                                     "Assembly seems already instrumented.");
 
-                            else if (method.Name == "Dispose" &&
+                            else if (
+                                method.Name == "Dispose" &&
                                 method.Parameters.Count == 0 &&
                                 method.ReturnType.Resolve().FullName ==
-                                typeVoid.FullName)
+                                    typeVoid.FullName)
+                            {
+                                // We don't do value types yet
+                                if(method.DeclaringType.IsValueType)
+                                    continue;
+
+                                // This may happen if the user code contains 
+                                // a `using` block with a value type 
+                                // implementing IDisposable
+                                else if (i.Previous.OpCode == OpCodes.Constrained)
+                                {
+                                    var constrainedType =
+                                        i.Previous.Operand as TypeDefinition;
+
+                                    if(constrainedType != null &&
+                                        constrainedType.IsValueType)
+                                        continue;
+                                }
+
                                 disposes.Add(i);
+                            }
                         }
                     }
 
@@ -82,24 +102,23 @@ namespace IDisposer.Core
 
                     foreach (var i in newobjs)
                     {
-                        new ILInserter(il, i).Insert(il.Create(OpCodes.Dup))
-                            .Insert(il.Create(OpCodes.Call, drAddRef));
+                            new ILInserter(il, i)
+                                .Append(il.Create(OpCodes.Call, drAddRef));
                     }
 
                     foreach (var i in disposes)
                     {
                         // Put instrumenting opcodes _after_ 
                         // the instruction, and then replace with Nop.
-                        // This way we don't have to deal with seqeunce 
-                        // points.
-                        new ILInserter(il, i).Insert(il.Create(OpCodes.Dup))
-                            .Insert(il.Create(OpCodes.Call, drRemoveRef))
-                            .Insert(i);
+                        // This way we don't have to deal with branches. 
+                        new ILInserter(il, i)
+                            .Append(il.Create(OpCodes.Call, drRemoveRef))
+                            .Append(i);
                         il.Replace(i, il.Create(OpCodes.Nop));
                     }
 
                     if(newobjs.Count > 0 || disposes.Count > 0)
-                        Console.WriteLine("- {0}: {1} news; {2} disposes",
+                        Console.WriteLine("- {0}: {1} newobjs; {2} disposes",
                             m.FullName, newobjs.Count, disposes.Count);
                 }
             }

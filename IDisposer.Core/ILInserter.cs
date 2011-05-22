@@ -20,7 +20,7 @@ namespace IDisposer.Core
             _anchor = anchor;
         }
 
-        public ILInserter Insert(Instruction instruction)
+        public ILInserter Append(Instruction instruction)
         {
             _il.InsertAfter(_anchor, instruction);
             return new ILInserter(_il, instruction);
