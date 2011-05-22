@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<VisualState xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ShowCheckBoxes="false">
+  <TopNode>[0-1000]K:\Projects\EyeDisposable\EyeDisposable.nunit</TopNode>
+  <SelectedNode>[0-1000]K:\Projects\EyeDisposable\EyeDisposable.nunit</SelectedNode>
+  <ExcludeCategories>false</ExcludeCategories>
+  <Nodes>
+    <Node UniqueName="[0-1000]K:\Projects\EyeDisposable\EyeDisposable.nunit" Expanded="true" />
+    <Node UniqueName="[0-1015]K:\Projects\EyeDisposable\Tests\bin\Debug\Tests.dll" Expanded="true" />
+    <Node UniqueName="[0-1016]Tests" Expanded="true" />
+    <Node UniqueName="[0-1013]Tests.BasicTests" Expanded="true" />
+    <Node UniqueName="[0-1011]Tests.InstrumenterTests" Expanded="true" />
+    <Node UniqueName="[0-1001]Tests.LeakTests" Expanded="true" />
+    <Node UniqueName="[0-1002]Tests.LeakTests.LeakTest" Expanded="true" />
+  </Nodes>
+</VisualState>

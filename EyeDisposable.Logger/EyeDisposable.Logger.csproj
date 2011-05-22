@@ -8,8 +8,8 @@
     <ProjectGuid>{9DDF01F5-D745-42F0-ACFD-F15CDE5F7F90}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>IDisposer.Logger</RootNamespace>
-    <AssemblyName>IDisposer.Logger</AssemblyName>
+    <RootNamespace>EyeDisposable.Logger</RootNamespace>
+    <AssemblyName>EyeDisposable.Logger</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -35,7 +35,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>IDisposer.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>EyeDisposable.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -46,7 +46,7 @@
     <Compile Include="TraceAndStreamWriter.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="IDisposer.snk" />
+    <None Include="EyeDisposable.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

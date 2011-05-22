@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Mono.Cecil;
 
-namespace IDisposer.Core
+namespace EyeDisposable.Core
 {
     static class TypeReferenceExtensions
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Mono.Cecil.Cil;
 
-namespace IDisposer.Core
+namespace EyeDisposable.Core
 {
     /// <summary>
     /// Syntactic sugar to make fluent InsertAfter() calls

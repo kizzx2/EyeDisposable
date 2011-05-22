@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
-using IDisposer.Core;
-using IDisposer.Logger;
+using EyeDisposable.Core;
+using EyeDisposable.Logger;
 
 namespace Tests
 {
