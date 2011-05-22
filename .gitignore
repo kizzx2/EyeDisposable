@@ -4,5 +4,5 @@ obj/
 *.suo
 *.user
 
-/IDisposer.VisualState.xml
+/EyeDisposable.VisualState.xml
 /TestResult.xml
