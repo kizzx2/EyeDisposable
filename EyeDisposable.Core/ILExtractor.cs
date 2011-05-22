@@ -61,16 +61,14 @@ namespace EyeDisposable.Core
                 else if (i.OpCode == OpCodes.Callvirt ||
                     i.OpCode == OpCodes.Call)
                 {
-                    //if (operandMethod.FullName == drAdd.FullName)
-                    //    throw new InvalidOperationException(
-                    //        "Assembly seems already instrumented.");
-
                     if(
                         operandMethod.Name == "Dispose" &&
                         operandMethod.Parameters.Count == 0 &&
                         operandMethod.ReturnType.Resolve().FullName ==
                             kTypeVoidFullName)
                     {
+                        var targetIl = i;
+
                         // We don't do value types yet
                         if(operandMethod.DeclaringType.IsValueType)
                             continue;
@@ -80,15 +78,17 @@ namespace EyeDisposable.Core
                         // implementing IDisposable
                         else if (i.Previous.OpCode == OpCodes.Constrained)
                         {
-                            var constrainedType =
-                                i.Previous.Operand as TypeDefinition;
-
-                            if(constrainedType != null &&
-                                constrainedType.IsValueType)
+                            // We don't do value types yet
+                            if(((TypeReference)i.Previous.Operand).IsValueType)
                                 continue;
+
+                            // Constrained-dispose pair should be moved 
+                            // atomically. Report the constrained instruction 
+                            // so it will be instrumented instead.
+                            targetIl = i.Previous;
                         }
 
-                        disposes.Add(i);
+                        disposes.Add(targetIl);
                     }
                 }
             }

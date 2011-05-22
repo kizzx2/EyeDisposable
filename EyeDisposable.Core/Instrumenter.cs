@@ -71,21 +71,14 @@ namespace EyeDisposable.Core
 
                     foreach (var i in targets.Disposes)
                     {
-                        var instrumentTarget = i;
-
-                        // Constrained-Callvirt pair must be moved
-                        // atomically
-                        if (i.Previous.OpCode == OpCodes.Constrained)
-                            instrumentTarget = i.Previous;
-                        
                         // Put instrumenting opcodes _after_ 
                         // the instruction, and then replace with Nop.
                         // This way we don't have to deal with branches. 
-                        new ILInserter(il, instrumentTarget)
+                        new ILInserter(il, i)
                             .Append(il.Create(OpCodes.Dup))
                             .Append(il.Create(OpCodes.Call, drRemoveRef))
-                            .Append(instrumentTarget);
-                        il.Replace(instrumentTarget, il.Create(OpCodes.Nop));
+                            .Append(i);
+                        il.Replace(i, il.Create(OpCodes.Nop));
                     }
 
                     Console.WriteLine("- {0}: {1} newobjs; {2} disposes",
