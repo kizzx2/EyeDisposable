@@ -57,3 +57,7 @@ You need to update the Cecil submodule after cloning:
 > cd EyeDisposable
 > git submodule update
 </pre>
+
+## Limitations
+
+- `IDisposable` value types are not supported.
