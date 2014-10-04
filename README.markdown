@@ -55,9 +55,10 @@ You need to update the Cecil submodule after cloning:
 <pre>
 > git clone git://github.com/kizzx2/EyeDisposable.git
 > cd EyeDisposable
+> git submodule init
 > git submodule update
 </pre>
 
 ## Limitations
 
-- `IDisposable` value types are not supported.
+- `IDisposable` _value types_ are not supported.
