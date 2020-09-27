@@ -1,5 +1,7 @@
 # EyeDisposable
 
+Lightweight `IDisposable` leak detector through instrumentation
+
 ## What?
 
 If you have used `IDisposable`, you will know the problem. It's very easy to "leak" them by forgetting to call `Dispose()` on them. Yes, most objects' finalizers will eventually call `Dispose()`, but it's a [bad practice to rely on finalizer being run at all](http://blogs.msdn.com/b/oldnewthing/archive/2010/08/09/10047586.aspx). It's cleaner and neater to `Dispose()` of them at an appropriate time.
